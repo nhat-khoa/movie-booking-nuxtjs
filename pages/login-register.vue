@@ -217,9 +217,9 @@
 </template>
 
 <script setup>
-definePageMeta({
-  layout: "auth",
-});
+// definePageMeta({
+//   layout: "auth",
+// });
 
 import { useToast } from "vue-toastification";
 

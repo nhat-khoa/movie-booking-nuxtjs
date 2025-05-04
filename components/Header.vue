@@ -78,8 +78,8 @@
                 <li :class="{ active: $route.path === '/movie' }">
                   <NuxtLink to="/movie">Phim</NuxtLink>
                 </li>
-                <li :class="{ active: $route.path === '/show-time' }">
-                  <NuxtLink to="/show-time">Lịch chiếu</NuxtLink>
+                <li :class="{ active: $route.path === '/schedule' }">
+                  <NuxtLink to="/schedule">Lịch chiếu</NuxtLink>
                 </li>
                 <li class=""><a href="gia-ve.html">giá vé</a></li>
                 <li class=""><a href="thanh-vien.html">Thành viên</a></li>
