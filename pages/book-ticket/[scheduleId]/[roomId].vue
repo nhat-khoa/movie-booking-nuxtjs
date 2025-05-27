@@ -1,14 +1,14 @@
 <template>
   <!-- HEADER STEPS -->
   <div class="steps-header clearfix">
-    <div class="pull-left">
-      <img
-        src="https://upload.wikimedia.org/wikipedia/vi/2/21/Touch_Cinema_logo.png"
-        alt="Touch Cinema Logo"
-      />
-    </div>
     <div class="pull-left" style="margin-left: 30px; line-height: 50px">
-      <span class="step">Quay lại</span>
+      <button
+        @click="goBack"
+        type="button"
+        class="btn btn-link p-0 m-0 align-baseline"
+      >
+        <i class="fa fa-arrow-left"></i> Quay lại
+      </button>
       <span class="step active">01 CHỌN GHẾ</span>
       <span class="step">02 XÁC THỰC & THANH TOÁN</span>
       <span class="step">03 HOÀN TẤT</span>
@@ -66,6 +66,8 @@
                   { 'seat-booked': seat.isBooked },
                   { 'text-light': seat.isBooked },
                   { 'seat-selected': isSelected(seat) },
+                  { 'seat-chosen': isChosenByAnotherUser(seat) },
+                  { 'text-light': isChosenByAnotherUser(seat) },
                 ]"
                 @click="toggleSeat(seat)"
               >
@@ -123,8 +125,10 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from "vue";
+import { onMounted, ref, onBeforeUnmount } from "vue";
 import { useToast } from "vue-toastification";
+import * as webstomp from "webstomp-client";
+import { useUserStore } from "~/stores/user";
 
 definePageMeta({
   layout: "book-ticket",
@@ -133,11 +137,14 @@ definePageMeta({
 const route = useRoute();
 const { $axios } = useNuxtApp();
 const toast = useToast();
+const userStore = useUserStore();
 
 const scheduleId = route.params.scheduleId;
 const roomId = route.params.roomId;
 const listSeats = ref([]);
 const selectedSeats = ref([]);
+const anotherUserSelectedSeats = ref([]);
+let stompClient = null;
 
 const groupedSeats = computed(() => {
   const groups = [];
@@ -161,7 +168,24 @@ const formattedTotalMoney = computed(() =>
     totalMoney.value
   )
 );
+
 onMounted(async () => {
+  if (!userStore.isLoaded) {
+    userStore.loadUserFromLocalStorage();
+  }
+  await loadSeatList();
+  await initSocket();
+});
+
+onBeforeUnmount(() => {
+  if (stompClient && stompClient.connected) {
+    stompClient.disconnect(() => {
+      console.log("🔌 Disconnected from STOMP");
+    });
+  }
+});
+
+const loadSeatList = async () => {
   try {
     // 1. Gọi API lấy danh sách ghế theo roomId
     const response = await $axios.get(`/seat/by-room-id/${roomId}`);
@@ -202,11 +226,65 @@ onMounted(async () => {
     console.error("Error fetching seat:", error);
     toast.error("Error fetching seat: " + error);
   }
-});
+};
+
+async function initSocket() {
+  // ✅ Import runtime để tránh lỗi 'global is not defined'
+  const SockJS = (await import("sockjs-client")).default;
+  const Stomp = (await import("webstomp-client")).default;
+
+  const socket = new SockJS("http://localhost:8080/ws"); // BE đã dùng SockJS endpoint
+  stompClient = Stomp.over(socket);
+
+  stompClient.connect(
+    {},
+
+    // On Connected
+    () => {
+      console.log("✅ Connected to STOMP");
+
+      stompClient.subscribe(`/topic/scheduleId/${scheduleId}`, (message) => {
+        const data = JSON.parse(message.body);
+        console.log("🎯 Seat updated:", data);
+        if (userStore.user.id !== data.userId) {
+          anotherUserSelectedSeats.value = data.seatIds;
+        }
+      });
+    },
+
+    // On Error
+    (error) => {
+      console.error("❌ STOMP connection error:", error);
+    }
+  );
+}
+
+// Khi selectedSeats thay đổi thì gửi lên server
+watch(
+  selectedSeats,
+  (newVal) => {
+    if (stompClient && stompClient.connected) {
+      stompClient.send(
+        "/app/select-seat", // endpoint định nghĩa ở server STOMP
+        JSON.stringify({
+          userId: userStore.user.id,
+          scheduleId,
+          seatIds: newVal.map((seat) => seat.id),
+        })
+      );
+    }
+  },
+  { deep: true }
+);
+
+const goBack = () => {
+  window.history.back();
+};
 
 const toggleSeat = (seat) => {
   if (seat.isBooked) return; // không xử lý nếu ghế đã đặt
-
+  if (isChosenByAnotherUser(seat)) return;
+  
   const index = selectedSeats.value.findIndex((s) => s.id === seat.id);
   if (index !== -1) {
     selectedSeats.value.splice(index, 1); // bỏ chọn nếu đã chọn
@@ -219,8 +297,32 @@ const isSelected = (seat) => {
   return selectedSeats.value.some((s) => s.id === seat.id);
 };
 
-const toggleBookTicket = () => {
+const isChosenByAnotherUser = (seat) => {
+  return anotherUserSelectedSeats.value.includes(seat.id);
+};
+
+const toggleBookTicket = async () => {
   console.log("selectedSeats count: ", selectedSeats.value.length);
+  if (selectedSeats.value.length <= 0) {
+    toast.info("No seat is selected");
+    return;
+  }
+  try {
+    const response = await $axios.post("/ticket", {
+      scheduleId: scheduleId,
+      seatIds: selectedSeats.value.map((seat) => seat.id),
+    });
+    const data = response.data;
+    console.log("data response:", data);
+    if (data.code == 1000) {
+      toast.success("Book ticket success!");
+    } else {
+      toast.error("Book ticket failed!");
+    }
+  } catch (error) {
+    console.error("Error during book ticket:", error);
+    toast.error(error.response.data.message);
+  }
 };
 </script>
 

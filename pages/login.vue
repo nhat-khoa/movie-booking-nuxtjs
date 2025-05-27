@@ -182,7 +182,7 @@
                           title="Login with facebook"
                           style="cursor: pointer"
                           type="button"
-                          @click="testToast"
+                          @click="handleGoogleFacebook"
                         >
                           <img
                             class="img-responsive"
@@ -222,14 +222,14 @@
 // });
 
 import { useToast } from "vue-toastification";
+import { useUserStore } from "~/stores/user";
 
 const { $googleSignIn, $axios } = useNuxtApp();
 const toast = useToast();
+const userStore = useUserStore();
 
-const testToast = () => {
-  const message = "test"; // hoặc thử object khác nếu bạn muốn test
-  console.log(typeof message, message);
-  toast.error(message);
+const handleGoogleFacebook = () => {
+  toast.info("Comming soon!");
 };
 
 const handleGoogleLogin = async () => {
@@ -249,13 +249,19 @@ async function loginWithGoogle(credential) {
     const response = await $axios.post("/auth/login-google", {
       credential,
     });
-    const data = response.data;
-    console.log("data response:", data);
+    const user = {
+      ...response.data.result.user,
+      accessToken: response.data.result.accessToken,
+      refreshToken: response.data.result.refreshToken,
+    };
+    userStore.setUser(user);
+    navigateTo("/schedule");
+
+    console.log("Login success, response: ", response);
     toast.success("Login success!");
-    toast.success("data response:" + data);
   } catch (error) {
-    console.error("Error during login:", error);
-    toast.error("Error during login: " + error);
+    console.error("Error during login: ", error);
+    toast.error(error.response.data.message);
   }
 }
 </script>

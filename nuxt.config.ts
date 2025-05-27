@@ -13,6 +13,8 @@ export default defineNuxtConfig({
 
   css: ["~/public/main.css", "~/public/bootstrap3.css"],
 
+  modules: ["@pinia/nuxt"],
+
   app: {
     head: {
       link: [

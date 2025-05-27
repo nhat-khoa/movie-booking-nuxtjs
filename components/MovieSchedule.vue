@@ -55,7 +55,7 @@
             v-for="schedule in movie.schedule"
             :key="schedule.id"
             :class="getClassForTime(schedule.startTime)"
-            :to="`/book-ticket/${schedule.id}/${schedule.roomId}`"
+            :to="`/book-ticket/${schedule.id}/${schedule.room.id}`"
           >
             {{ formatTime(schedule.startTime) }}
           </NuxtLink>

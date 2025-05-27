@@ -46,23 +46,75 @@
                 </div>
               </form>
             </div>
-            <div class="col-md-4 col-sm-5 account">
-              <a href="login.html" class="login">
+            <!-- Nếu user đã đăng nhập -->
+            <div v-if="userStore.user.id" class="col-md-4 col-sm-5 account">
+              <ul class="nav navbar-nav navbar-right">
+                <li>
+                  <a class="account">
+                    <img
+                      class="avatar"
+                      :src="userStore.user.avatarGoogleUrl"
+                      :alt="userStore.user.fullName"
+                    />
+                    <span class="name">
+                      {{ userStore.user.fullName }}
+                      <small>Touch Member</small>
+                    </span>
+                  </a>
+                </li>
+                <li @click="toggleDropdown" ref="dropdownRef">
+                  <div class="dropdown" :class="{ open: isOpen }">
+                    <a
+                      class="dropdown-toggle"
+                      type="button"
+                      data-toggle="dropdown"
+                      aria-expanded="false"
+                    >
+                      <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu">
+                      <li>
+                        <a href=""> Thông tin tài khoản </a>
+                      </li>
+                      <li>
+                        <a href="">Lịch sử mua vé</a>
+                      </li>
+                      <li>
+                        <a href="">Đổi thông tin</a>
+                      </li>
+                      <li>
+                        <a href="">Đổi mật khẩu</a>
+                      </li>
+                      <li>
+                        <a href="">Đổi thưởng</a>
+                      </li>
+                      <li role="presentation" class="divider"></li>
+                      <li style="cursor: pointer">
+                        <a type="button" @click="userStore.logout">Đăng xuất</a>
+                      </li>
+                    </ul>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <!-- Nếu chưa đăng nhập -->
+            <div v-else class="col-md-4 col-sm-5 account">
+              <NuxtLink to="/login" class="login">
                 <img
                   src="/images/icons/so-da.png"
                   alt="Đăng nhập"
                   class="img-responsive"
                 />
                 <span>Đăng nhập</span>
-              </a>
-              <a href="register.html" class="register">
+              </NuxtLink>
+              <NuxtLink to="/login" class="register">
                 <img
                   src="/images/icons/bong-ngo.png"
                   alt="Đăng kí"
                   class="img-responsive"
                 />
-                <span>Đăng kí <b class="hh">thành viên</b></span>
-              </a>
+                <span>Đăng kí <b>thành viên</b></span>
+              </NuxtLink>
             </div>
           </div>
         </div>
@@ -234,6 +286,28 @@
   </div>
 </template>
 
-<script setup></script>
+<script setup>
+import { ref, onMounted } from "vue";
+import { onClickOutside } from "@vueuse/core";
+import { useUserStore } from "~/stores/user";
 
-<style></style>
+const isOpen = ref(false);
+const userStore = useUserStore();
+const dropdownRef = ref(null);
+
+onMounted(() => {
+  if (!userStore.isLoaded) {
+    userStore.loadUserFromLocalStorage();
+  }
+});
+
+onClickOutside(dropdownRef, () => {
+  isOpen.value = false;
+});
+
+const toggleDropdown = () => {
+  isOpen.value = !isOpen.value;
+};
+</script>
+
+<style scoped></style>
