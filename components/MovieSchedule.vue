@@ -58,6 +58,7 @@
             :to="`/book-ticket/${schedule.id}/${schedule.room.id}`"
           >
             {{ formatTime(schedule.startTime) }}
+            <!-- {{ schedule.startTime }} -->
           </NuxtLink>
         </div>
       </div>

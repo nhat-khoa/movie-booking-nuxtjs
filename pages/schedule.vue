@@ -88,7 +88,7 @@ onMounted(async () => {
     });
   } catch (error) {
     console.error("Error fetching schedule:", error);
-    toast.error("Error fetching schedule:" + error);
+    toast.error("Error fetching schedule: " + error.response.data.message);
   }
 });
 

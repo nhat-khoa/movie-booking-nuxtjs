@@ -83,12 +83,16 @@
         <h4 class="text-center text-uppercase" style="color: #e91e63">
           Thông tin đặt vé
         </h4>
-        <p><strong>Họ tên:</strong> Nhật Khoa</p>
-        <p><strong>Số điện thoại:</strong> 03292381231</p>
-        <p><strong>Email:</strong> nhatkhoatruykich@gmail.com</p>
+        <p><strong>Họ tên: </strong>{{ userStore.user.fullName }}</p>
+        <p><strong>Số điện thoại: </strong>{{ userStore.user.phoneNumber }}</p>
+        <p><strong>Email: </strong>{{ userStore.user.email }}</p>
 
-        <p><strong>Phim:</strong> Lật Mặt 8: Vòng Tay Nắng</p>
-        <p><strong>Thời gian:</strong> Thứ Bảy, ngày 3/5 21:25 - RẠP 01</p>
+        <p><strong>Phim: </strong>{{ schedule.movie.title }}</p>
+        <p>
+          <strong>Thời gian: </strong>
+          {{ formatToVietnameseDateTime(schedule.startTime) }}
+        </p>
+        <p><strong>Phòng: </strong>{{ schedule.room.name }}</p>
         <p>
           <strong>Ghế: </strong>
           <span
@@ -146,6 +150,16 @@ const selectedSeats = ref([]);
 const anotherUserSelectedSeats = ref([]);
 let stompClient = null;
 
+const schedule = ref({
+  startTime: "loading...",
+  movie: {
+    title: "loading...",
+  },
+  room: {
+    name: "loading...",
+  },
+});
+
 const groupedSeats = computed(() => {
   const groups = [];
   const seats = listSeats.value;
@@ -170,20 +184,53 @@ const formattedTotalMoney = computed(() =>
 );
 
 onMounted(async () => {
+  window.addEventListener("beforeunload", cleanUpSeat);
   if (!userStore.isLoaded) {
     userStore.loadUserFromLocalStorage();
   }
   await loadSeatList();
+  await loadScheduleInfo();
   await initSocket();
 });
 
-onBeforeUnmount(() => {
+onBeforeUnmount(async () => {
+  window.removeEventListener("beforeunload", cleanUpSeat);
+  cleanUpSeat();
+});
+
+// Khi selectedSeats thay đổi thì gửi lên server
+watch(
+  selectedSeats,
+  (newVal) => {
+    if (stompClient && stompClient.connected) {
+      stompClient.send(
+        "/app/select-seat", // endpoint định nghĩa ở server STOMP
+        JSON.stringify({
+          userId: userStore.user.id,
+          scheduleId,
+          seatIds: newVal.map((seat) => seat.id),
+        })
+      );
+    }
+  },
+  { deep: true }
+);
+
+const cleanUpSeat = async () => {
   if (stompClient && stompClient.connected) {
+    stompClient.send(
+      "/app/select-seat", // endpoint định nghĩa ở server STOMP
+      JSON.stringify({
+        userId: userStore.user.id,
+        scheduleId,
+        seatIds: [],
+      })
+    );
     stompClient.disconnect(() => {
       console.log("🔌 Disconnected from STOMP");
     });
   }
-});
+};
 
 const loadSeatList = async () => {
   try {
@@ -199,7 +246,7 @@ const loadSeatList = async () => {
             "/ticket/exists-by-schedule-id-and-seat-id",
             {
               params: {
-                scheduleId: scheduleId, // bạn phải có biến này ở ngoài
+                scheduleId: scheduleId,
                 seatId: seat.id,
               },
             }
@@ -228,6 +275,17 @@ const loadSeatList = async () => {
   }
 };
 
+const loadScheduleInfo = async () => {
+  try {
+    // 1. Gọi API lấy danh sách ghế theo roomId
+    const response = await $axios.get(`/schedule/by-id/${scheduleId}`);
+    schedule.value = response.data.result;
+  } catch (error) {
+    console.error("Error fetching schedule:", error);
+    toast.error("Error fetching schedule: " + error);
+  }
+};
+
 async function initSocket() {
   // ✅ Import runtime để tránh lỗi 'global is not defined'
   const SockJS = (await import("sockjs-client")).default;
@@ -244,12 +302,25 @@ async function initSocket() {
       console.log("✅ Connected to STOMP");
 
       stompClient.subscribe(`/topic/scheduleId/${scheduleId}`, (message) => {
-        const data = JSON.parse(message.body);
+        const data = JSON.parse(message.body); // data là mảng SeatSelected
+
         console.log("🎯 Seat updated:", data);
-        if (userStore.user.id !== data.userId) {
-          anotherUserSelectedSeats.value = data.seatIds;
-        }
+
+        const selectedByOthers = data
+          .filter((item) => item.userId !== userStore.user.id)
+          .flatMap((item) => item.seatIds); // gom tất cả seatIds của user khác
+
+        anotherUserSelectedSeats.value = selectedByOthers;
       });
+
+      stompClient.send(
+        "/app/select-seat", // endpoint định nghĩa ở server STOMP
+        JSON.stringify({
+          userId: userStore.user.id,
+          scheduleId,
+          seatIds: [],
+        })
+      );
     },
 
     // On Error
@@ -259,32 +330,14 @@ async function initSocket() {
   );
 }
 
-// Khi selectedSeats thay đổi thì gửi lên server
-watch(
-  selectedSeats,
-  (newVal) => {
-    if (stompClient && stompClient.connected) {
-      stompClient.send(
-        "/app/select-seat", // endpoint định nghĩa ở server STOMP
-        JSON.stringify({
-          userId: userStore.user.id,
-          scheduleId,
-          seatIds: newVal.map((seat) => seat.id),
-        })
-      );
-    }
-  },
-  { deep: true }
-);
-
 const goBack = () => {
   window.history.back();
 };
 
-const toggleSeat = (seat) => {
+const toggleSeat = async (seat) => {
   if (seat.isBooked) return; // không xử lý nếu ghế đã đặt
   if (isChosenByAnotherUser(seat)) return;
-  
+
   const index = selectedSeats.value.findIndex((s) => s.id === seat.id);
   if (index !== -1) {
     selectedSeats.value.splice(index, 1); // bỏ chọn nếu đã chọn
@@ -324,6 +377,37 @@ const toggleBookTicket = async () => {
     toast.error(error.response.data.message);
   }
 };
+
+function formatToVietnameseDateTime(inputDateTime) {
+  const now = new Date();
+  const inputDate = new Date(inputDateTime);
+
+  // Danh sách tên thứ trong tuần (bắt đầu từ Chủ Nhật = 0)
+  const weekdays = [
+    "Chủ nhật",
+    "Thứ 2",
+    "Thứ 3",
+    "Thứ 4",
+    "Thứ 5",
+    "Thứ 6",
+    "Thứ 7",
+  ];
+
+  const isToday =
+    inputDate.getDate() === now.getDate() &&
+    inputDate.getMonth() === now.getMonth() &&
+    inputDate.getFullYear() === now.getFullYear();
+
+  const day = String(inputDate.getDate()).padStart(2, "0");
+  const month = String(inputDate.getMonth() + 1).padStart(2, "0");
+  const year = inputDate.getFullYear();
+  const hours = String(inputDate.getHours()).padStart(2, "0");
+  const minutes = String(inputDate.getMinutes()).padStart(2, "0");
+
+  const weekday = isToday ? "Hôm nay" : weekdays[inputDate.getDay()];
+
+  return `${weekday}, ngày ${day}/${month}/${year} ${hours}:${minutes}`;
+}
 </script>
 
 <style scoped>
