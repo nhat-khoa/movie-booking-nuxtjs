@@ -196,40 +196,21 @@ onMounted(async () => {
 onBeforeUnmount(async () => {
   window.removeEventListener("beforeunload", cleanUpSeat);
   cleanUpSeat();
-});
-
-// Khi selectedSeats thay đổi thì gửi lên server
-watch(
-  selectedSeats,
-  (newVal) => {
-    if (stompClient && stompClient.connected) {
-      stompClient.send(
-        "/app/select-seat", // endpoint định nghĩa ở server STOMP
-        JSON.stringify({
-          userId: userStore.user.id,
-          scheduleId,
-          seatIds: newVal.map((seat) => seat.id),
-        })
-      );
-    }
-  },
-  { deep: true }
-);
-
-const cleanUpSeat = async () => {
   if (stompClient && stompClient.connected) {
-    stompClient.send(
-      "/app/select-seat", // endpoint định nghĩa ở server STOMP
-      JSON.stringify({
-        userId: userStore.user.id,
-        scheduleId,
-        seatIds: [],
-      })
-    );
     stompClient.disconnect(() => {
       console.log("🔌 Disconnected from STOMP");
     });
   }
+});
+
+const cleanUpSeat = async () => {
+  stompClient.send(
+    "/app/deselect-seat",
+    JSON.stringify({
+      userId: userStore.user.id,
+      scheduleId,
+    })
+  );
 };
 
 const loadSeatList = async () => {
@@ -308,7 +289,7 @@ async function initSocket() {
 
         const selectedByOthers = data
           .filter((item) => item.userId !== userStore.user.id)
-          .flatMap((item) => item.seatIds); // gom tất cả seatIds của user khác
+          .flatMap((item) => item.seatId); // gom tất cả seatIds của user khác
 
         anotherUserSelectedSeats.value = selectedByOthers;
       });
@@ -318,7 +299,6 @@ async function initSocket() {
         JSON.stringify({
           userId: userStore.user.id,
           scheduleId,
-          seatIds: [],
         })
       );
     },
@@ -341,8 +321,24 @@ const toggleSeat = async (seat) => {
   const index = selectedSeats.value.findIndex((s) => s.id === seat.id);
   if (index !== -1) {
     selectedSeats.value.splice(index, 1); // bỏ chọn nếu đã chọn
+    stompClient.send(
+      "/app/deselect-seat",
+      JSON.stringify({
+        userId: userStore.user.id,
+        scheduleId,
+        seatId: seat.id,
+      })
+    );
   } else {
     selectedSeats.value.push(seat); // chọn nếu chưa có
+    stompClient.send(
+      "/app/select-seat",
+      JSON.stringify({
+        userId: userStore.user.id,
+        scheduleId,
+        seatId: seat.id,
+      })
+    );
   }
 };
 
@@ -360,22 +356,23 @@ const toggleBookTicket = async () => {
     toast.info("No seat is selected");
     return;
   }
-  try {
-    const response = await $axios.post("/ticket", {
-      scheduleId: scheduleId,
-      seatIds: selectedSeats.value.map((seat) => seat.id),
-    });
-    const data = response.data;
-    console.log("data response:", data);
-    if (data.code == 1000) {
-      toast.success("Book ticket success!");
-    } else {
-      toast.error("Book ticket failed!");
-    }
-  } catch (error) {
-    console.error("Error during book ticket:", error);
-    toast.error(error.response.data.message);
-  }
+  toast.info("dat ve");
+  // try {
+  //   const response = await $axios.post("/ticket", {
+  //     scheduleId: scheduleId,
+  //     seatIds: selectedSeats.value.map((seat) => seat.id),
+  //   });
+  //   const data = response.data;
+  //   console.log("data response:", data);
+  //   if (data.code == 1000) {
+  //     toast.success("Book ticket success!");
+  //   } else {
+  //     toast.error("Book ticket failed!");
+  //   }
+  // } catch (error) {
+  //   console.error("Error during book ticket:", error);
+  //   toast.error(error.response.data.message);
+  // }
 };
 
 function formatToVietnameseDateTime(inputDateTime) {
