@@ -184,7 +184,6 @@ const formattedTotalMoney = computed(() =>
 );
 
 onMounted(async () => {
-  window.addEventListener("beforeunload", cleanUpSeat);
   if (!userStore.isLoaded) {
     userStore.loadUserFromLocalStorage();
   }
@@ -194,24 +193,12 @@ onMounted(async () => {
 });
 
 onBeforeUnmount(async () => {
-  window.removeEventListener("beforeunload", cleanUpSeat);
-  cleanUpSeat();
   if (stompClient && stompClient.connected) {
     stompClient.disconnect(() => {
       console.log("🔌 Disconnected from STOMP");
     });
   }
 });
-
-const cleanUpSeat = async () => {
-  stompClient.send(
-    "/app/deselect-seat",
-    JSON.stringify({
-      userId: userStore.user.id,
-      scheduleId,
-    })
-  );
-};
 
 const loadSeatList = async () => {
   try {
@@ -282,17 +269,43 @@ async function initSocket() {
     () => {
       console.log("✅ Connected to STOMP");
 
-      stompClient.subscribe(`/topic/scheduleId/${scheduleId}`, (message) => {
-        const data = JSON.parse(message.body); // data là mảng SeatSelected
+      stompClient.subscribe(
+        `/topic/scheduleId/${scheduleId}`,
+        async (message) => {
+          const data = JSON.parse(message.body); // Mảng SeatSelected
+          console.log("🎯 Seat updated:", data);
 
-        console.log("🎯 Seat updated:", data);
+          const anotherSeats = [];
+          const currentUserSeatIds = [];
 
-        const selectedByOthers = data
-          .filter((item) => item.userId !== userStore.user.id)
-          .flatMap((item) => item.seatId); // gom tất cả seatIds của user khác
+          // Tách seatId theo user
+          data.forEach((item) => {
+            if (item.userId !== userStore.user.id) {
+              anotherSeats.push(item.seatId);
+            } else {
+              currentUserSeatIds.push(item.seatId);
+            }
+          });
 
-        anotherUserSelectedSeats.value = selectedByOthers;
-      });
+          // Gán seatId của user khác
+          anotherUserSelectedSeats.value = anotherSeats;
+
+          try {
+            // Gọi API lấy object seat theo từng seatId
+            const seatPromises = currentUserSeatIds.map((id) =>
+              $axios.get(`/seat/${id}`).then((res) => res.data.result)
+            );
+
+            const seatObjects = await Promise.all(seatPromises);
+
+            // Gán object seat vào selectedSeats
+            selectedSeats.value = seatObjects;
+          } catch (error) {
+            console.error("❌ Error fetching seats:", error);
+            toast.error("Failed to fetch seat details");
+          }
+        }
+      );
 
       stompClient.send(
         "/app/select-seat", // endpoint định nghĩa ở server STOMP
@@ -320,7 +333,6 @@ const toggleSeat = async (seat) => {
 
   const index = selectedSeats.value.findIndex((s) => s.id === seat.id);
   if (index !== -1) {
-    selectedSeats.value.splice(index, 1); // bỏ chọn nếu đã chọn
     stompClient.send(
       "/app/deselect-seat",
       JSON.stringify({
@@ -330,7 +342,6 @@ const toggleSeat = async (seat) => {
       })
     );
   } else {
-    selectedSeats.value.push(seat); // chọn nếu chưa có
     stompClient.send(
       "/app/select-seat",
       JSON.stringify({
@@ -351,28 +362,37 @@ const isChosenByAnotherUser = (seat) => {
 };
 
 const toggleBookTicket = async () => {
-  console.log("selectedSeats count: ", selectedSeats.value.length);
   if (selectedSeats.value.length <= 0) {
-    toast.info("No seat is selected");
+    toast.info("Không có ghế nào được chọn!!!");
     return;
   }
-  toast.info("dat ve");
-  // try {
-  //   const response = await $axios.post("/ticket", {
-  //     scheduleId: scheduleId,
-  //     seatIds: selectedSeats.value.map((seat) => seat.id),
-  //   });
-  //   const data = response.data;
-  //   console.log("data response:", data);
-  //   if (data.code == 1000) {
-  //     toast.success("Book ticket success!");
-  //   } else {
-  //     toast.error("Book ticket failed!");
-  //   }
-  // } catch (error) {
-  //   console.error("Error during book ticket:", error);
-  //   toast.error(error.response.data.message);
-  // }
+  try {
+    const response = await $axios.post("/payment/create", {
+      userId: userStore.user.id,
+      scheduleId: scheduleId,
+      seatIds: selectedSeats.value.map((seat) => seat.id),
+      totalPrice: totalMoney.value,
+    });
+    const result = response.data.result;
+    if (result.returnCode == 1) {
+      toast.success("Book ticket success!");
+      navigateTo("/history");
+    } else if (result.returnCode == -99) {
+      toast.error("No seat is being selected!!!");
+      stompClient.send(
+        "/app/select-seat",
+        JSON.stringify({
+          userId: userStore.user.id,
+          scheduleId,
+        })
+      );
+    } else {
+      toast.error("Book ticket failed!");
+    }
+  } catch (error) {
+    console.error("Error during book ticket:", error);
+    toast.error("Error during book tick");
+  }
 };
 
 function formatToVietnameseDateTime(inputDateTime) {

@@ -77,7 +77,7 @@
                         <a href=""> Thông tin tài khoản </a>
                       </li>
                       <li>
-                        <a href="">Lịch sử mua vé</a>
+                        <NuxtLink to="/history">Lịch sử mua vé</NuxtLink>
                       </li>
                       <li>
                         <a href="">Đổi thông tin</a>
