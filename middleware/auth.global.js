@@ -5,7 +5,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
   const { $axios } = useNuxtApp();
 
   const excludePaths = ["/", "/login", "/movie", "/schedule"];
-  if (excludePaths.includes(to.path)) {
+  if (excludePaths.includes(to.path) || to.path.startsWith('/movie/')) {
     return;
   }
   // Gọi API introspect để verify token

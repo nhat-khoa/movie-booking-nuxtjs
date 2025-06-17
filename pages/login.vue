@@ -12,7 +12,7 @@
             <div class="col-md-7 col-sm-6">
               <div class="mbox">
                 <div class="title">
-                  <h2>Đăng kí</h2>
+                  <h2>{{ $t("login.signup") }}</h2>
                 </div>
                 <div class="box-body">
                   <form
@@ -26,13 +26,14 @@
                       value="ebZ5a7IoDdxuk661G0YWsm56CePNfExXJzQEehrU"
                     />
                     <div class="form-group">
-                      <label for="name">Tên đăng nhập</label>
+                      <label for="name">{{ $t("login.username") }}</label>
                       <input
                         id="name"
                         type="text"
                         class="form-control"
                         name="name"
                         value=""
+                        :placeholder="$t('login.username')"
                         required
                         autofocus
                       />
@@ -46,53 +47,60 @@
                         class="form-control"
                         name="email"
                         value=""
+                        placeholder="E-Mail"
                         required
                       />
                     </div>
 
                     <div class="form-group">
-                      <label for="name">Họ và tên</label>
+                      <label for="name">{{ $t("login.fullname") }}</label>
                       <input
                         id="name"
                         type="text"
                         class="form-control"
                         name="fullname"
                         value=""
+                        :placeholder="$t('login.fullname')"
                         required
                         autofocus
                       />
                     </div>
                     <div class="form-group">
-                      <label for="name">SĐT</label>
+                      <label for="name">{{ $t("login.phoneNumber") }}</label>
                       <input
                         id="name"
                         type="phone"
                         class="form-control"
                         name="phone"
                         value=""
+                        :placeholder="$t('login.phoneNumber')"
                         required
                         autofocus
                       />
                     </div>
 
                     <div class="form-group">
-                      <label for="password">Mật khẩu</label>
+                      <label for="password">{{ $t("login.password") }}</label>
                       <input
                         id="password"
                         type="password"
                         class="form-control"
                         name="password"
+                        :placeholder="$t('login.password')"
                         required
                       />
                     </div>
 
                     <div class="form-group">
-                      <label for="password-confirm">Nhập lại mật khẩu</label>
+                      <label for="password-confirm">
+                        {{ $t("login.reEnterPass") }}
+                      </label>
                       <input
                         id="password-confirm"
                         type="password"
                         class="form-control"
                         name="password_confirmation"
+                        :placeholder="$t('login.reEnterPass')"
                         required
                       />
                     </div>
@@ -103,7 +111,7 @@
                       value=""
                     />
                     <button type="submit" class="btn btn-primary">
-                      Đăng kí
+                      {{ $t("login.signup") }}
                     </button>
                   </form>
                 </div>
@@ -115,7 +123,7 @@
                   <div class="col-xs-12">
                     <div class="mbox mbox-2">
                       <div class="title">
-                        <h2>Đăng nhập</h2>
+                        <h2>{{ $t("login.signin") }}</h2>
                       </div>
                       <div class="box-body">
                         <form
@@ -133,25 +141,29 @@
                             value="http://touchcinema.com/"
                           />
                           <div class="form-group">
-                            <label for="username">Tên đăng nhập:</label>
+                            <label for="username">
+                              {{ $t("login.username") }}
+                            </label>
                             <input
                               id="username"
                               type="text"
                               name="name"
                               class="form-control"
                               value=""
-                              placeholder="Tên đăng nhập"
+                              :placeholder="$t('login.username')"
                               required
                             />
                           </div>
                           <div class="form-group">
-                            <label for="password">Mật khẩu:</label>
+                            <label for="password">
+                              {{ $t("login.password") }}
+                            </label>
                             <input
                               id="password"
                               type="password"
                               name="password"
                               class="form-control"
-                              placeholder="Mật khẩu"
+                              :placeholder="$t('login.password')"
                               required
                             />
                           </div>
@@ -163,18 +175,23 @@
                               checked="checked"
                               value="forever"
                             />
-                            <label for="remember" class="italic"
-                              >Ghi nhớ đăng nhập</label
-                            >
+                            <label for="remember" class="italic">
+                              {{ $t("login.rememberLogin") }}
+                            </label>
                           </div>
                           <input
                             type="submit"
                             class="btn btn-login"
-                            value="Đăng nhập"
+                            :value="$t('login.signin')"
                           />
                           <div class="attr-link">
-                            <a href="password/reset.html">Quên mật khẩu</a>
-                            / <a href="register.html">Đăng kí</a>
+                            <a href="password/reset.html">
+                              {{ $t("login.forgotPass") }}
+                            </a>
+                            /
+                            <a href="register.html">
+                              {{ $t("login.signup") }}
+                            </a>
                           </div>
                         </form>
                         <a

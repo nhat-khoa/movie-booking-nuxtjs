@@ -133,54 +133,6 @@
         </div>
       </div>
     </div>
-    <div class="modal fade" id="modal-subscribe">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <button
-              type="button"
-              class="close"
-              data-dismiss="modal"
-              aria-hidden="true"
-            >
-              &times;
-            </button>
-            <h4 class="modal-title">Đăng kí nhận tin</h4>
-          </div>
-          <div class="modal-body">
-            <div id="subscribe-msg" class="alert alert-danger hidden">
-              <button
-                type="button"
-                class="close"
-                data-dismiss="alert"
-                aria-hidden="true"
-              >
-                &times;
-              </button>
-              <p></p>
-            </div>
-            <div class="input-group">
-              <span class="input-group-addon"
-                ><i class="fa fa-envelope-o" aria-hidden="true"></i
-              ></span>
-              <input
-                type="text"
-                class="form-control"
-                id="email-subscribe"
-                required
-              />
-            </div>
-          </div>
-          <div class="modal-footer">
-            <div class="center">
-              <button type="button" class="btn btn-primary btn-subscribe">
-                Đăng kí
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
   </div>
 </template>
 

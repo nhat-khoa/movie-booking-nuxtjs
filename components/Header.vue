@@ -19,12 +19,20 @@
                   src="/images/icons/dat-ve-ngay.png"
                   alt="Mua vé"
               /></a>
-              <a class="flags" href="#"
-                ><img
+              <a @click="switchLanguage('vi')" class="flags cursor-pointer">
+                <img
                   class="img-responsive"
                   src="/images/flags/vn.png"
                   alt="Ngôn ngữ"
-              /></a>
+                />
+              </a>
+              <a @click="switchLanguage('en')" class="flags cursor-pointer">
+                <img
+                  class="img-responsive"
+                  src="/images/flags/us.png"
+                  alt="Ngôn ngữ"
+                />
+              </a>
               <a class="hidden-lg btn-search" href="javascript:;"
                 ><i class="fa fa-search"></i
               ></a>
@@ -38,7 +46,7 @@
                     name="k"
                     value=""
                     type="search"
-                    placeholder="Tìm kiếm"
+                    :placeholder="$t('header.search')"
                   />
                   <button type="submit" class="submit">
                     <i class="fa fa-search"></i>
@@ -105,7 +113,7 @@
                   alt="Đăng nhập"
                   class="img-responsive"
                 />
-                <span>Đăng nhập</span>
+                <span>{{ $t("header.signin") }}</span>
               </NuxtLink>
               <NuxtLink to="/login" class="register">
                 <img
@@ -113,7 +121,7 @@
                   alt="Đăng kí"
                   class="img-responsive"
                 />
-                <span>Đăng kí <b>thành viên</b></span>
+                <span>{{ $t("header.signUpMember") }}</span>
               </NuxtLink>
             </div>
           </div>
@@ -126,22 +134,32 @@
           <div id="primary-menu">
             <div class="collapse navbar-collapse">
               <ul class="nav navbar-nav navbar-left">
-                <li class=""><a href="index.html">Trang chủ</a></li>
+                <li class="">
+                  <a href="index.html">{{ $t("header.home") }}</a>
+                </li>
                 <li :class="{ active: $route.path === '/movie' }">
-                  <NuxtLink to="/movie">Phim</NuxtLink>
+                  <NuxtLink to="/movie">{{ $t("header.movie") }}</NuxtLink>
                 </li>
                 <li :class="{ active: $route.path === '/schedule' }">
-                  <NuxtLink to="/schedule">Lịch chiếu</NuxtLink>
-                </li>
-                <li class=""><a href="gia-ve.html">giá vé</a></li>
-                <li class=""><a href="thanh-vien.html">Thành viên</a></li>
-                <li class="">
-                  <a href="khuyen-mai.html">Ưu đãi - Sự kiện</a>
+                  <NuxtLink to="/schedule">{{
+                    $t("header.schedule")
+                  }}</NuxtLink>
                 </li>
                 <li class="">
-                  <a href="danh-gia-phim.html">Đánh giá phim</a>
+                  <a href="gia-ve.html">{{ $t("header.price") }}</a>
                 </li>
-                <li class=""><a href="gioi-thieu.html">Giới thiệu</a></li>
+                <li class="">
+                  <a href="thanh-vien.html">{{ $t("header.member") }}</a>
+                </li>
+                <li class="">
+                  <a href="khuyen-mai.html">{{ $t("header.event") }}</a>
+                </li>
+                <li class="">
+                  <a href="danh-gia-phim.html">{{ $t("header.review") }}</a>
+                </li>
+                <li class="">
+                  <a href="gioi-thieu.html">{{ $t("header.introduce") }}</a>
+                </li>
                 <li class="dropdown">
                   <a
                     class="dropdown-toggle"
@@ -151,12 +169,12 @@
                     aria-haspopup="true"
                     aria-expanded="false"
                   >
-                    Dịch vụ</a
-                  >
+                    {{ $t("header.service") }}
+                  </a>
                   <ul class="dropdown-menu">
                     <li>
                       <a href="dich-vu/quang-cao-su-kien.html">
-                        Dịch vụ quảng cáo - sự kiện
+                        {{ $t("header.advertisingEventServices") }}
                       </a>
                     </li>
                     <li>
@@ -290,7 +308,9 @@
 import { ref, onMounted } from "vue";
 import { onClickOutside } from "@vueuse/core";
 import { useUserStore } from "~/stores/user";
+import { useI18n } from "vue-i18n";
 
+const { locale } = useI18n();
 const isOpen = ref(false);
 const userStore = useUserStore();
 const dropdownRef = ref(null);
@@ -308,6 +328,14 @@ onClickOutside(dropdownRef, () => {
 const toggleDropdown = () => {
   isOpen.value = !isOpen.value;
 };
+
+const switchLanguage = (lang) => {
+  locale.value = lang;
+};
 </script>
 
-<style scoped></style>
+<style scoped>
+.cursor-pointer {
+  cursor: pointer;
+}
+</style>

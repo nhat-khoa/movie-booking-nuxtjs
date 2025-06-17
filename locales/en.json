@@ -1,0 +1,29 @@
+{
+  "header": {
+    "search": "Search...",
+    "home": "Home",
+    "movie": "Movie",
+    "schedule": "Schedule",
+    "price": "Price",
+    "member": "Member",
+    "event": "Offers - Events",
+    "review": "Review",
+    "introduce": "Introduce",
+    "service": "Service",
+    "advertisingEventServices": "Advertising And Event Services",
+    "signUpMember": "Sign up member",
+    "signin": "Sign in",
+    "signup": "Sign up"
+  },
+  "login": {
+    "signin": "Sign in",
+    "signup": "Sign up",
+    "username": "Username",
+    "fullname": "Full name",
+    "phoneNumber": "Phone number",
+    "password": "Password",
+    "reEnterPass": "Re-enter password",
+    "rememberLogin": "Remember login",
+    "forgotPass": "Forgot password"
+  }
+}

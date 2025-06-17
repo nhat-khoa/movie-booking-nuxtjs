@@ -38,7 +38,7 @@
               }}
             </td>
             <td class="text-center">
-              {{ formattedVND(ticket.totalPrice) }}
+              {{ formatVND(ticket.totalPrice) }}
             </td>
             <td class="text-center text-danger">
               {{ formatTime(ticket.timeToLive) }}
@@ -77,6 +77,7 @@
             <th class="text-center">Ghế</th>
             <th class="text-center">Giá</th>
             <th class="text-center">Thời gian đặt</th>
+            <th class="text-center">Trạng thái</th>
           </tr>
         </thead>
         <tbody v-if="paidTickets.length > 0">
@@ -95,16 +96,25 @@
               }}
             </td>
             <td class="text-center">
-              {{ formattedVND(ticket.totalPrice) }}
+              {{ formatVND(ticket.totalPrice) }}
             </td>
             <td class="text-center">
               {{ formatDateTime(ticket.bookedAt) }}
+            </td>
+            <td
+              v-if="isSeen(ticket.schedule.startTime)"
+              class="text-center text-success"
+            >
+              <i class="fa fa-check" aria-hidden="true"></i> Hoàn thành
+            </td>
+            <td v-else class="text-center text-danger">
+              <i class="fa fa-times" aria-hidden="true"></i> Chưa xem
             </td>
           </tr>
         </tbody>
         <tbody v-else>
           <tr>
-            <td colspan="7" class="text-center text-muted py-3">
+            <td colspan="8" class="text-center text-muted py-3">
               Không có dữ liệu
             </td>
           </tr>
@@ -158,7 +168,7 @@ const fetchPaidTickets = async () => {
   try {
     const response = await $axios.get(`/ticket/by-user`);
     paidTickets.value = response.data.result.sort((a, b) => {
-      return new Date(a.schedule.startTime) - new Date(b.schedule.startTime);
+      return new Date(b.schedule.startTime) - new Date(a.schedule.startTime);
     });
     console.log("paid tickets: ", paidTickets.value);
   } catch (error) {
@@ -181,7 +191,7 @@ const formatTime = (seconds) => {
   return `${m}:${s}`;
 };
 
-const formattedVND = (price) => {
+const formatVND = (price) => {
   return new Intl.NumberFormat("vi-VN", {
     style: "currency",
     currency: "VND",
@@ -217,6 +227,12 @@ const formatDateTime = (inputDateTime) => {
   const weekday = isToday ? "Hôm nay" : weekdays[inputDate.getDay()];
 
   return `${hours}:${minutes}, ${weekday} (${day}/${month}/${year}) `;
+};
+
+const isSeen = (startTime) => {
+  const now = new Date();
+  const start = new Date(startTime);
+  return start < now ? true : false;
 };
 </script>
 

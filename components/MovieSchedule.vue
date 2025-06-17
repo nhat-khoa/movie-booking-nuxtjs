@@ -9,9 +9,9 @@
     </div>
     <div class="col-lg-9 col-md-9 col-sm-8">
       <div class="info">
-        <a href="phim/dia-dao-mat-troi-trong-bong-toi.html">
+        <NuxtLink :to="`/movie/${movie.id}`">
           <h3>{{ movie.title }}</h3>
-        </a>
+        </NuxtLink>
         <h3 style="color: black">{{ movie.titleEnglish }}</h3>
         <div class="age">{{ movie.ageRating }}</div>
         <div class="release">

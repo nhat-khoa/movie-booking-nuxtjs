@@ -1,0 +1,29 @@
+{
+  "header": {
+    "search": "Tìm kiếm...",
+    "home": "Trang chủ",
+    "movie": "Phim",
+    "schedule": "Lịch chiếu",
+    "price": "Giá",
+    "member": "Thành viên",
+    "event": "Ưu đãi - Sự kiện",
+    "review": "Đánh giá",
+    "introduce": "Giới thiệu",
+    "service": "Dịch vụ",
+    "advertisingEventServices": "Dịch vụ quảng cáo - sự kiện",
+    "signUpMember": "Đăng kí thành viên",
+    "signin": "Đăng nhập",
+    "signup": "Đăng kí"
+  },
+  "login": {
+    "signin": "Đăng nhập",
+    "signup": "Đăng kí",
+    "username": "Tên đăng nhập",
+    "fullname": "Họ tên",
+    "phoneNumber": "Số điện thoại",
+    "password": "Mật khẩu",
+    "reEnterPass": "Nhập lại mật khẩu",
+    "rememberLogin": "Ghi nhớ đăng nhập",
+    "forgotPass": "Quên mật khẩu"
+  }
+}
