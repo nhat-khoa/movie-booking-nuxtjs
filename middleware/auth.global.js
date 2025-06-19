@@ -4,7 +4,10 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
   const userStore = useUserStore();
   const { $axios } = useNuxtApp();
 
-  const excludePaths = ["/", "/login", "/movie", "/schedule"];
+  const excludePaths = [
+    "/", "/login", "/movie", "/schedule",
+    "/price", "/member", "/event", "/rate-movie"
+  ];
   if (excludePaths.includes(to.path) || to.path.startsWith('/movie/')) {
     return;
   }

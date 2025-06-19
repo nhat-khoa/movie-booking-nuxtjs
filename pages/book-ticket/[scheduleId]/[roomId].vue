@@ -22,7 +22,11 @@
       <div class="col-md-9">
         <p>
           <small>
-            * Không được bỏ trống 01 ghế bên cạnh hoặc ghế đầu tiên của dãy
+            * Khi click chọn ghế, ghế sẽ được giữ trong 3 phút.
+            <br />
+            * Khi click đặt vé, ghế sẽ được giữ trong 15 phút để quý khách thanh
+            toán, nếu không thanh toán trong vòng 15 phút, ghế sẽ được giải
+            phóng để phục vụ khách hàng khác.
           </small>
         </p>
 
@@ -103,6 +107,29 @@
             {{ seat.line + "" + seat.number + ", " }}
           </span>
         </p>
+        <p><strong>Giá ghế:</strong></p>
+        <ul>
+          <li class="text-danger">
+            <i class="fa fa-user"></i>
+            <strong> Ghế đơn:</strong>
+            <span
+              class="label label-success"
+              style="font-size: 14px; margin-left: 5px"
+            >
+              80.000 đ
+            </span>
+          </li>
+          <li class="text-danger" style="margin-top: 10px">
+            <i class="fa fa-users"></i>
+            <strong> Ghế đôi:</strong>
+            <span
+              class="label label-success"
+              style="font-size: 14px; margin-left: 5px"
+            >
+              150.000 đ
+            </span>
+          </li>
+        </ul>
         <p><strong>Lưu ý:</strong></p>
         <ul>
           <li>Vé đã mua không thể đổi hay trả lại.</li>
@@ -139,7 +166,7 @@ definePageMeta({
 });
 
 const route = useRoute();
-const { $axios } = useNuxtApp();
+const { $axios, $swal } = useNuxtApp();
 const toast = useToast();
 const userStore = useUserStore();
 
@@ -298,6 +325,16 @@ async function initSocket() {
 
             const seatObjects = await Promise.all(seatPromises);
 
+            console.log("seatObjects: ", seatObjects);
+            seatObjects.sort((a, b) => {
+              // So sánh theo line trước (A, B, C,...)
+              if (a.line < b.line) return -1;
+              if (a.line > b.line) return 1;
+
+              // Nếu line giống nhau thì so sánh theo number (số)
+              return a.number - b.number;
+            });
+
             // Gán object seat vào selectedSeats
             selectedSeats.value = seatObjects;
           } catch (error) {
@@ -327,72 +364,12 @@ const goBack = () => {
   window.history.back();
 };
 
-const toggleSeat = async (seat) => {
-  if (seat.isBooked) return; // không xử lý nếu ghế đã đặt
-  if (isChosenByAnotherUser(seat)) return;
-
-  const index = selectedSeats.value.findIndex((s) => s.id === seat.id);
-  if (index !== -1) {
-    stompClient.send(
-      "/app/deselect-seat",
-      JSON.stringify({
-        userId: userStore.user.id,
-        scheduleId,
-        seatId: seat.id,
-      })
-    );
-  } else {
-    stompClient.send(
-      "/app/select-seat",
-      JSON.stringify({
-        userId: userStore.user.id,
-        scheduleId,
-        seatId: seat.id,
-      })
-    );
-  }
-};
-
 const isSelected = (seat) => {
   return selectedSeats.value.some((s) => s.id === seat.id);
 };
 
 const isChosenByAnotherUser = (seat) => {
   return anotherUserSelectedSeats.value.includes(seat.id);
-};
-
-const toggleBookTicket = async () => {
-  if (selectedSeats.value.length <= 0) {
-    toast.info("Không có ghế nào được chọn!!!");
-    return;
-  }
-  try {
-    const response = await $axios.post("/payment/create", {
-      userId: userStore.user.id,
-      scheduleId: scheduleId,
-      seatIds: selectedSeats.value.map((seat) => seat.id),
-      totalPrice: totalMoney.value,
-    });
-    const result = response.data.result;
-    if (result.returnCode == 1) {
-      toast.success("Book ticket success!");
-      navigateTo("/history");
-    } else if (result.returnCode == -99) {
-      toast.error("No seat is being selected!!!");
-      stompClient.send(
-        "/app/select-seat",
-        JSON.stringify({
-          userId: userStore.user.id,
-          scheduleId,
-        })
-      );
-    } else {
-      toast.error("Book ticket failed!");
-    }
-  } catch (error) {
-    console.error("Error during book ticket:", error);
-    toast.error("Error during book tick");
-  }
 };
 
 function formatToVietnameseDateTime(inputDateTime) {
@@ -425,6 +402,84 @@ function formatToVietnameseDateTime(inputDateTime) {
 
   return `${weekday}, ngày ${day}/${month}/${year} ${hours}:${minutes}`;
 }
+
+const toggleSeat = async (seat) => {
+  if (seat.isBooked) return; // không xử lý nếu ghế đã đặt
+  if (isChosenByAnotherUser(seat)) return;
+
+  const index = selectedSeats.value.findIndex((s) => s.id === seat.id);
+  if (index !== -1) {
+    stompClient.send(
+      "/app/deselect-seat",
+      JSON.stringify({
+        userId: userStore.user.id,
+        scheduleId,
+        seatId: seat.id,
+      })
+    );
+  } else {
+    stompClient.send(
+      "/app/select-seat",
+      JSON.stringify({
+        userId: userStore.user.id,
+        scheduleId,
+        seatId: seat.id,
+      })
+    );
+  }
+};
+
+const toggleBookTicket = async () => {
+  if (selectedSeats.value.length <= 0) {
+    toast.info("Không có ghế nào được chọn!!!");
+    return;
+  }
+  try {
+    const response = await $axios.post("/payment/create", {
+      userId: userStore.user.id,
+      scheduleId: scheduleId,
+      seatIds: selectedSeats.value.map((seat) => seat.id),
+      totalPrice: totalMoney.value,
+    });
+    const result = response.data.result;
+    if (result.returnCode == 1) {
+      toast.success("Book ticket success!");
+      popupNotification();
+      navigateTo("/history");
+    } else if (result.returnCode == -99) {
+      toast.error("No seat is being selected!!!");
+      stompClient.send(
+        "/app/select-seat",
+        JSON.stringify({
+          userId: userStore.user.id,
+          scheduleId,
+        })
+      );
+    } else {
+      toast.error("Book ticket failed!");
+    }
+  } catch (error) {
+    console.error("Error during book ticket:", error);
+    toast.error("Error during book tick");
+  }
+};
+
+const popupNotification = () => {
+  $swal.fire({
+    title: "Thông báo!",
+    html: `Quý khách vui lòng thanh toán trong vòng <b style="color: red;">15 phút</b> kể từ bây giờ. 
+         Sau thời gian này, hệ thống sẽ tự động <b>giải phóng ghế</b> để phục vụ khách hàng khác.`,
+    icon: "info",
+    width: "700px",
+    padding: "2.5em",
+    customClass: {
+      popup: "custom-swal-popup",
+      title: "custom-swal-title",
+      content: "custom-swal-content",
+      icon: "custom-swal-icon",
+    },
+  });
+};
 </script>
 
 <style scoped>
@@ -535,5 +590,32 @@ function formatToVietnameseDateTime(inputDateTime) {
   margin-bottom: 10px;
   font-size: 25px;
   color: #e91e63;
+}
+
+:global(.custom-swal-popup) {
+  font-size: 22px;
+  max-width: 700px;
+  padding: 2.5em;
+}
+
+:global(.custom-swal-title) {
+  font-size: 32px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+:global(.custom-swal-content) {
+  font-size: 22px;
+  line-height: 1.6;
+}
+
+:global(.custom-swal-icon) {
+  width: 80px !important;
+  height: 80px !important;
+  margin: 20px auto;
+}
+
+:global(.custom-swal-icon .swal2-icon-content) {
+  font-size: 50px !important;
 }
 </style>

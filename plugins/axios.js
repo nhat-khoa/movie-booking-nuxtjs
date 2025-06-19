@@ -8,20 +8,20 @@ export default defineNuxtPlugin((nuxtApp) => {
     baseURL: config.public.apiBase,
   });
 
+  // REQUEST Interceptor: Gắn token nếu có
   instance.interceptors.request.use(
     (config) => {
       const userStore = useUserStore();
 
-      // Load lại từ localStorage nếu chưa load
       if (!userStore.isLoaded) {
         userStore.loadUserFromLocalStorage();
       }
 
-      const token = userStore.user.accessToken;
+      const token = userStore.user?.accessToken;
+
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
-      }
-      else {
+      } else {
         delete config.headers.Authorization;
       }
 
@@ -32,9 +32,33 @@ export default defineNuxtPlugin((nuxtApp) => {
     }
   );
 
+  // RESPONSE Interceptor: Xử lý lỗi toàn cục
+  instance.interceptors.response.use(
+    (response) => response,
+    async (error) => {
+      const userStore = useUserStore();
+
+      if (error.response?.status === 401) {
+        toast.error("Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.");
+        userStore.logout();
+      }
+
+      if (error.response?.status === 403) {
+        toast.error("Không có quyền truy cập.");
+      }
+
+      if (error.response?.status >= 500) {
+        toast.error("Lỗi hệ thống. Vui lòng thử lại sau.");
+      }
+
+      return Promise.reject(error);
+    }
+  );
+
   return {
     provide: {
       axios: instance,
     },
   };
 });
+

@@ -156,7 +156,21 @@ onBeforeUnmount(() => {
 const fetchUnpaidTickets = async () => {
   try {
     const response = await $axios.get(`/redis/ticket`);
-    unpaidTickets.value = response.data.result;
+    unpaidTickets.value = response.data.result
+      .map((item) => {
+        item.seats.sort((a, b) => {
+          // So sánh theo line trước (A, B, C,...)
+          if (a.line < b.line) return -1;
+          if (a.line > b.line) return 1;
+
+          // Nếu line giống nhau thì so sánh theo number (số)
+          return a.number - b.number;
+        });
+        return item;
+      })
+      .sort((a, b) => {
+        return a.timeToLive - b.timeToLive;
+      });
     console.log("unpaid tickets: ", unpaidTickets.value);
   } catch (error) {
     console.error("Error fetching unpaid tickets:", error);
@@ -237,12 +251,6 @@ const isSeen = (startTime) => {
 </script>
 
 <style scoped>
-.white-bg {
-  background-color: white;
-  padding: 20px;
-  border-radius: 6px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-}
 .table-danger {
   background-color: #f8d7da !important; /* Màu đỏ nhạt giống Bootstrap 5 */
   color: #842029; /* Màu chữ đỏ đậm */

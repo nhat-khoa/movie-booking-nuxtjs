@@ -272,7 +272,7 @@ async function loginWithGoogle(credential) {
       refreshToken: response.data.result.refreshToken,
     };
     userStore.setUser(user);
-    navigateTo("/schedule");
+    navigateTo("/movie");
 
     console.log("Login success, response: ", response);
     toast.success("Login success!");

@@ -39,518 +39,113 @@
             class="tab-pane fade in active"
           >
             <div class="row row-eq-height">
-              <div class="col-md-3 col-sm-4 col-xs-6">
-                <div class="movie" style="padding-top: 30px">
+              <div
+                v-for="movie in movieNowShowing"
+                :key="movie.id"
+                class="col-md-3 col-sm-4 col-xs-6"
+              >
+                <div class="movie">
                   <div class="poster">
-                    <a href="phim/dia-dao-mat-troi-trong-bong-toi.html">
+                    <NuxtLink :to="`movie/${movie.id}`">
                       <img
                         class="img-responsive"
-                        src="/uploads/slide-web/470x700-24-poster.jpg"
-                        alt="Địa Đạo: Mặt Trời Trong Bóng Tối"
+                        :src="movie.posterUrl"
+                        :alt="movie.title"
                       />
-                    </a>
+                    </NuxtLink>
                     <div class="info">
-                      <a
-                        href="phim/dia-dao-mat-troi-trong-bong-toi.html"
-                        class="button detail"
-                      >
-                        > Chi tiết
-                      </a>
-                      <a
-                        href="phim/dia-dao-mat-troi-trong-bong-toi.html#showtime"
-                        class="button ticket"
-                      >
+                      <NuxtLink :to="`movie/${movie.id}`" class="button detail">
+                        Chi tiết
+                      </NuxtLink>
+                      <a href="" class="button ticket">
                         Mua vé
                         <img src="/images/icons/icon-dat-ve.png" alt="Mua vé" />
                       </a>
-                      <p class="button duration"><b>Thời lượng:</b> 128 phút</p>
-                      <p class="button category"><b>Thể loại:</b> Lịch Sử</p>
-                      <p class="button format"><b>Định dạng</b> 2D</p>
+                      <p class="button duration">
+                        <b>Thời lượng:</b> {{ movie.duration }} phút
+                      </p>
+                      <p class="button category">
+                        <b>Thể loại:</b> {{ movie.category }}
+                      </p>
                     </div>
                   </div>
-                  <div class="detail">
+                  <div class="detail" style="min-height: 160px">
                     <h2>
-                      <a href="phim/dia-dao-mat-troi-trong-bong-toi.html"
-                        >Địa Đạo: Mặt Trời Trong Bóng Tối</a
-                      >
+                      <NuxtLink :to="`movie/${movie.id}`">
+                        {{ movie.title }}
+                      </NuxtLink>
                     </h2>
-                    <p class="release">Khởi chiếu 04/04/2025</p>
-                  </div>
-                </div>
-              </div>
-              <div class="col-md-3 col-sm-4 col-xs-6">
-                <div class="movie" style="padding-top: 30px">
-                  <div class="poster">
-                    <a href="phim/dia-dao-mat-troi-trong-bong-toi.html">
-                      <img
-                        class="img-responsive"
-                        src="/uploads/slide-web/470x700-24-poster.jpg"
-                        alt="Địa Đạo: Mặt Trời Trong Bóng Tối"
-                      />
-                    </a>
-                    <div class="info">
-                      <a
-                        href="phim/dia-dao-mat-troi-trong-bong-toi.html"
-                        class="button detail"
-                      >
-                        > Chi tiết
-                      </a>
-                      <a
-                        href="phim/dia-dao-mat-troi-trong-bong-toi.html#showtime"
-                        class="button ticket"
-                      >
-                        Mua vé
-                        <img src="/images/icons/icon-dat-ve.png" alt="Mua vé" />
-                      </a>
-                      <p class="button duration"><b>Thời lượng:</b> 128 phút</p>
-                      <p class="button category"><b>Thể loại:</b> Lịch Sử</p>
-                      <p class="button format"><b>Định dạng</b> 2D</p>
-                    </div>
-                  </div>
-                  <div class="detail">
-                    <h2>
-                      <a href="phim/dia-dao-mat-troi-trong-bong-toi.html"
-                        >Địa Đạo: Mặt Trời Trong Bóng Tối</a
-                      >
-                    </h2>
-                    <p class="release">Khởi chiếu 04/04/2025</p>
-                  </div>
-                </div>
-              </div>
-              <div class="col-md-3 col-sm-4 col-xs-6">
-                <div class="movie" style="padding-top: 30px">
-                  <div class="poster">
-                    <a href="phim/dia-dao-mat-troi-trong-bong-toi.html">
-                      <img
-                        class="img-responsive"
-                        src="/uploads/slide-web/470x700-24-poster.jpg"
-                        alt="Địa Đạo: Mặt Trời Trong Bóng Tối"
-                      />
-                    </a>
-                    <div class="info">
-                      <a
-                        href="phim/dia-dao-mat-troi-trong-bong-toi.html"
-                        class="button detail"
-                      >
-                        > Chi tiết
-                      </a>
-                      <a
-                        href="phim/dia-dao-mat-troi-trong-bong-toi.html#showtime"
-                        class="button ticket"
-                      >
-                        Mua vé
-                        <img src="/images/icons/icon-dat-ve.png" alt="Mua vé" />
-                      </a>
-                      <p class="button duration"><b>Thời lượng:</b> 128 phút</p>
-                      <p class="button category"><b>Thể loại:</b> Lịch Sử</p>
-                      <p class="button format"><b>Định dạng</b> 2D</p>
-                    </div>
-                  </div>
-                  <div class="detail">
-                    <h2>
-                      <a href="phim/dia-dao-mat-troi-trong-bong-toi.html"
-                        >Địa Đạo: Mặt Trời Trong Bóng Tối</a
-                      >
-                    </h2>
-                    <p class="release">Khởi chiếu 04/04/2025</p>
-                  </div>
-                </div>
-              </div>
-              <div class="col-md-3 col-sm-4 col-xs-6">
-                <div class="movie" style="padding-top: 30px">
-                  <div class="poster">
-                    <a href="phim/dia-dao-mat-troi-trong-bong-toi.html">
-                      <img
-                        class="img-responsive"
-                        src="/uploads/slide-web/470x700-24-poster.jpg"
-                        alt="Địa Đạo: Mặt Trời Trong Bóng Tối"
-                      />
-                    </a>
-                    <div class="info">
-                      <a
-                        href="phim/dia-dao-mat-troi-trong-bong-toi.html"
-                        class="button detail"
-                      >
-                        > Chi tiết
-                      </a>
-                      <a
-                        href="phim/dia-dao-mat-troi-trong-bong-toi.html#showtime"
-                        class="button ticket"
-                      >
-                        Mua vé
-                        <img src="/images/icons/icon-dat-ve.png" alt="Mua vé" />
-                      </a>
-                      <p class="button duration"><b>Thời lượng:</b> 128 phút</p>
-                      <p class="button category"><b>Thể loại:</b> Lịch Sử</p>
-                      <p class="button format"><b>Định dạng</b> 2D</p>
-                    </div>
-                  </div>
-                  <div class="detail">
-                    <h2>
-                      <a href="phim/dia-dao-mat-troi-trong-bong-toi.html"
-                        >Địa Đạo: Mặt Trời Trong Bóng Tối</a
-                      >
-                    </h2>
-                    <p class="release">Khởi chiếu 04/04/2025</p>
-                  </div>
-                </div>
-              </div>
-              <div class="col-md-3 col-sm-4 col-xs-6">
-                <div class="movie" style="padding-top: 30px">
-                  <div class="poster">
-                    <a href="phim/dia-dao-mat-troi-trong-bong-toi.html">
-                      <img
-                        class="img-responsive"
-                        src="/uploads/slide-web/470x700-24-poster.jpg"
-                        alt="Địa Đạo: Mặt Trời Trong Bóng Tối"
-                      />
-                    </a>
-                    <div class="info">
-                      <a
-                        href="phim/dia-dao-mat-troi-trong-bong-toi.html"
-                        class="button detail"
-                      >
-                        > Chi tiết
-                      </a>
-                      <a
-                        href="phim/dia-dao-mat-troi-trong-bong-toi.html#showtime"
-                        class="button ticket"
-                      >
-                        Mua vé
-                        <img src="/images/icons/icon-dat-ve.png" alt="Mua vé" />
-                      </a>
-                      <p class="button duration"><b>Thời lượng:</b> 128 phút</p>
-                      <p class="button category"><b>Thể loại:</b> Lịch Sử</p>
-                      <p class="button format"><b>Định dạng</b> 2D</p>
-                    </div>
-                  </div>
-                  <div class="detail">
-                    <h2>
-                      <a href="phim/dia-dao-mat-troi-trong-bong-toi.html"
-                        >Địa Đạo: Mặt Trời Trong Bóng Tối</a
-                      >
-                    </h2>
-                    <p class="release">Khởi chiếu 04/04/2025</p>
-                  </div>
-                </div>
-              </div>
-              <div class="col-md-3 col-sm-4 col-xs-6">
-                <div class="movie" style="padding-top: 30px">
-                  <div class="poster">
-                    <a href="phim/dia-dao-mat-troi-trong-bong-toi.html">
-                      <img
-                        class="img-responsive"
-                        src="/uploads/slide-web/470x700-24-poster.jpg"
-                        alt="Địa Đạo: Mặt Trời Trong Bóng Tối"
-                      />
-                    </a>
-                    <div class="info">
-                      <a
-                        href="phim/dia-dao-mat-troi-trong-bong-toi.html"
-                        class="button detail"
-                      >
-                        > Chi tiết
-                      </a>
-                      <a
-                        href="phim/dia-dao-mat-troi-trong-bong-toi.html#showtime"
-                        class="button ticket"
-                      >
-                        Mua vé
-                        <img src="/images/icons/icon-dat-ve.png" alt="Mua vé" />
-                      </a>
-                      <p class="button duration"><b>Thời lượng:</b> 128 phút</p>
-                      <p class="button category"><b>Thể loại:</b> Lịch Sử</p>
-                      <p class="button format"><b>Định dạng</b> 2D</p>
-                    </div>
-                  </div>
-                  <div class="detail">
-                    <h2>
-                      <a href="phim/dia-dao-mat-troi-trong-bong-toi.html"
-                        >Địa Đạo: Mặt Trời Trong Bóng Tối</a
-                      >
-                    </h2>
-                    <p class="release">Khởi chiếu 04/04/2025</p>
-                  </div>
-                </div>
-              </div>
-              <div class="col-md-3 col-sm-4 col-xs-6">
-                <div class="movie" style="padding-top: 30px">
-                  <div class="poster">
-                    <a href="phim/dia-dao-mat-troi-trong-bong-toi.html">
-                      <img
-                        class="img-responsive"
-                        src="/uploads/slide-web/470x700-24-poster.jpg"
-                        alt="Địa Đạo: Mặt Trời Trong Bóng Tối"
-                      />
-                    </a>
-                    <div class="info">
-                      <a
-                        href="phim/dia-dao-mat-troi-trong-bong-toi.html"
-                        class="button detail"
-                      >
-                        > Chi tiết
-                      </a>
-                      <a
-                        href="phim/dia-dao-mat-troi-trong-bong-toi.html#showtime"
-                        class="button ticket"
-                      >
-                        Mua vé
-                        <img src="/images/icons/icon-dat-ve.png" alt="Mua vé" />
-                      </a>
-                      <p class="button duration"><b>Thời lượng:</b> 128 phút</p>
-                      <p class="button category"><b>Thể loại:</b> Lịch Sử</p>
-                      <p class="button format"><b>Định dạng</b> 2D</p>
-                    </div>
-                  </div>
-                  <div class="detail">
-                    <h2>
-                      <a href="phim/dia-dao-mat-troi-trong-bong-toi.html"
-                        >Địa Đạo: Mặt Trời Trong Bóng Tối</a
-                      >
-                    </h2>
-                    <p class="release">Khởi chiếu 04/04/2025</p>
-                  </div>
-                </div>
-              </div>
-              <div class="col-md-3 col-sm-4 col-xs-6">
-                <div class="movie" style="padding-top: 30px">
-                  <div class="poster">
-                    <a href="phim/dia-dao-mat-troi-trong-bong-toi.html">
-                      <img
-                        class="img-responsive"
-                        src="/uploads/slide-web/470x700-24-poster.jpg"
-                        alt="Địa Đạo: Mặt Trời Trong Bóng Tối"
-                      />
-                    </a>
-                    <div class="info">
-                      <a
-                        href="phim/dia-dao-mat-troi-trong-bong-toi.html"
-                        class="button detail"
-                      >
-                        > Chi tiết
-                      </a>
-                      <a
-                        href="phim/dia-dao-mat-troi-trong-bong-toi.html#showtime"
-                        class="button ticket"
-                      >
-                        Mua vé
-                        <img src="/images/icons/icon-dat-ve.png" alt="Mua vé" />
-                      </a>
-                      <p class="button duration"><b>Thời lượng:</b> 128 phút</p>
-                      <p class="button category"><b>Thể loại:</b> Lịch Sử</p>
-                      <p class="button format"><b>Định dạng</b> 2D</p>
-                    </div>
-                  </div>
-                  <div class="detail">
-                    <h2>
-                      <a href="phim/dia-dao-mat-troi-trong-bong-toi.html"
-                        >Địa Đạo: Mặt Trời Trong Bóng Tối</a
-                      >
-                    </h2>
-                    <p class="release">Khởi chiếu 04/04/2025</p>
-                  </div>
-                </div>
-              </div>
-              <div class="col-md-3 col-sm-4 col-xs-6">
-                <div class="movie" style="padding-top: 30px">
-                  <div class="poster">
-                    <a href="phim/dia-dao-mat-troi-trong-bong-toi.html">
-                      <img
-                        class="img-responsive"
-                        src="/uploads/slide-web/470x700-24-poster.jpg"
-                        alt="Địa Đạo: Mặt Trời Trong Bóng Tối"
-                      />
-                    </a>
-                    <div class="info">
-                      <a
-                        href="phim/dia-dao-mat-troi-trong-bong-toi.html"
-                        class="button detail"
-                      >
-                        > Chi tiết
-                      </a>
-                      <a
-                        href="phim/dia-dao-mat-troi-trong-bong-toi.html#showtime"
-                        class="button ticket"
-                      >
-                        Mua vé
-                        <img src="/images/icons/icon-dat-ve.png" alt="Mua vé" />
-                      </a>
-                      <p class="button duration"><b>Thời lượng:</b> 128 phút</p>
-                      <p class="button category"><b>Thể loại:</b> Lịch Sử</p>
-                      <p class="button format"><b>Định dạng</b> 2D</p>
-                    </div>
-                  </div>
-                  <div class="detail">
-                    <h2>
-                      <a href="phim/dia-dao-mat-troi-trong-bong-toi.html"
-                        >Địa Đạo: Mặt Trời Trong Bóng Tối</a
-                      >
-                    </h2>
-                    <p class="release">Khởi chiếu 04/04/2025</p>
-                  </div>
-                </div>
-              </div>
-              <div class="col-md-3 col-sm-4 col-xs-6">
-                <div class="movie" style="padding-top: 30px">
-                  <div class="poster">
-                    <a href="phim/dia-dao-mat-troi-trong-bong-toi.html">
-                      <img
-                        class="img-responsive"
-                        src="/uploads/slide-web/470x700-24-poster.jpg"
-                        alt="Địa Đạo: Mặt Trời Trong Bóng Tối"
-                      />
-                    </a>
-                    <div class="info">
-                      <a
-                        href="phim/dia-dao-mat-troi-trong-bong-toi.html"
-                        class="button detail"
-                      >
-                        > Chi tiết
-                      </a>
-                      <a
-                        href="phim/dia-dao-mat-troi-trong-bong-toi.html#showtime"
-                        class="button ticket"
-                      >
-                        Mua vé
-                        <img src="/images/icons/icon-dat-ve.png" alt="Mua vé" />
-                      </a>
-                      <p class="button duration"><b>Thời lượng:</b> 128 phút</p>
-                      <p class="button category"><b>Thể loại:</b> Lịch Sử</p>
-                      <p class="button format"><b>Định dạng</b> 2D</p>
-                    </div>
-                  </div>
-                  <div class="detail">
-                    <h2>
-                      <a href="phim/dia-dao-mat-troi-trong-bong-toi.html"
-                        >Địa Đạo: Mặt Trời Trong Bóng Tối</a
-                      >
-                    </h2>
-                    <p class="release">Khởi chiếu 04/04/2025</p>
+                    <p class="release">Khởi chiếu {{ movie.releaseDate }}</p>
                   </div>
                 </div>
               </div>
             </div>
           </div>
           <div v-else id="phimsapchieu" class="tab-pane fade in active">
-            <div class="row row-eq-height">
-              <div class="col-md-3 col-sm-4 col-xs-6">
-                <div class="movie" style="padding-top: 30px">
+            <div v-if="movieCommingSoon.length > 0" class="row row-eq-height">
+              <div
+                v-for="movie in movieCommingSoon"
+                :key="movie.id"
+                class="col-md-3 col-sm-4 col-xs-6"
+              >
+                <div class="movie">
                   <div class="poster">
-                    <a href="phim/tham-tu-kien-ky-an-khong-dau.html">
+                    <NuxtLink :to="`movie/${movie.id}`">
                       <img
                         class="img-responsive"
-                        src="/uploads/slide-web/ttk-poster-teaser-cursed-village-fa-1638x2048-1-poster.jpg"
-                        alt="Thám Tử Kiên: Kỳ Án Không Đầu"
+                        :src="movie.posterUrl"
+                        :alt="movie.title"
                       />
-                    </a>
+                    </NuxtLink>
                     <div class="info">
-                      <a
-                        href="phim/tham-tu-kien-ky-an-khong-dau.html"
-                        class="button detail"
-                      >
-                        > Chi tiết
-                      </a>
-                      <a
-                        href="phim/tham-tu-kien-ky-an-khong-dau.html#showtime"
-                        class="button ticket"
-                      >
+                      <NuxtLink :to="`movie/${movie.id}`" class="button detail">
+                        Chi tiết
+                      </NuxtLink>
+                      <a href="" class="button ticket">
                         Mua vé
                         <img src="/images/icons/icon-dat-ve.png" alt="Mua vé" />
                       </a>
-                      <p class="button duration"><b>Thời lượng:</b></p>
-                      <p class="button category"><b>Thể loại:</b> Kinh Dị</p>
-                      <p class="button format"><b>Định dạng</b> 2D</p>
+                      <p class="button duration">
+                        <b>Thời lượng:</b> {{ movie.duration }} phút
+                      </p>
+                      <p class="button category">
+                        <b>Thể loại:</b> {{ movie.category }}
+                      </p>
                     </div>
                   </div>
-                  <div class="detail">
+                  <div class="detail" style="min-height: 160px">
                     <h2>
-                      <a href="phim/tham-tu-kien-ky-an-khong-dau.html"
-                        >Thám Tử Kiên: Kỳ Án Không Đầu</a
-                      >
+                      <NuxtLink :to="`movie/${movie.id}`">
+                        {{ movie.title }}
+                      </NuxtLink>
                     </h2>
-                    <p class="release">Khởi chiếu 30/04/2025</p>
-                  </div>
-                </div>
-              </div>
-              <div class="col-md-3 col-sm-4 col-xs-6">
-                <div class="movie" style="padding-top: 30px">
-                  <div class="poster">
-                    <a href="phim/tham-tu-kien-ky-an-khong-dau.html">
-                      <img
-                        class="img-responsive"
-                        src="/uploads/slide-web/ttk-poster-teaser-cursed-village-fa-1638x2048-1-poster.jpg"
-                        alt="Thám Tử Kiên: Kỳ Án Không Đầu"
-                      />
-                    </a>
-                    <div class="info">
-                      <a
-                        href="phim/tham-tu-kien-ky-an-khong-dau.html"
-                        class="button detail"
-                      >
-                        > Chi tiết
-                      </a>
-                      <a
-                        href="phim/tham-tu-kien-ky-an-khong-dau.html#showtime"
-                        class="button ticket"
-                      >
-                        Mua vé
-                        <img src="/images/icons/icon-dat-ve.png" alt="Mua vé" />
-                      </a>
-                      <p class="button duration"><b>Thời lượng:</b></p>
-                      <p class="button category"><b>Thể loại:</b> Kinh Dị</p>
-                      <p class="button format"><b>Định dạng</b> 2D</p>
-                    </div>
-                  </div>
-                  <div class="detail">
-                    <h2>
-                      <a href="phim/tham-tu-kien-ky-an-khong-dau.html"
-                        >Thám Tử Kiên: Kỳ Án Không Đầu</a
-                      >
-                    </h2>
-                    <p class="release">Khởi chiếu 30/04/2025</p>
-                  </div>
-                </div>
-              </div>
-              <div class="col-md-3 col-sm-4 col-xs-6">
-                <div class="movie" style="padding-top: 30px">
-                  <div class="poster">
-                    <a href="phim/tham-tu-kien-ky-an-khong-dau.html">
-                      <img
-                        class="img-responsive"
-                        src="/uploads/slide-web/ttk-poster-teaser-cursed-village-fa-1638x2048-1-poster.jpg"
-                        alt="Thám Tử Kiên: Kỳ Án Không Đầu"
-                      />
-                    </a>
-                    <div class="info">
-                      <a
-                        href="phim/tham-tu-kien-ky-an-khong-dau.html"
-                        class="button detail"
-                      >
-                        > Chi tiết
-                      </a>
-                      <a
-                        href="phim/tham-tu-kien-ky-an-khong-dau.html#showtime"
-                        class="button ticket"
-                      >
-                        Mua vé
-                        <img src="/images/icons/icon-dat-ve.png" alt="Mua vé" />
-                      </a>
-                      <p class="button duration"><b>Thời lượng:</b></p>
-                      <p class="button category"><b>Thể loại:</b> Kinh Dị</p>
-                      <p class="button format"><b>Định dạng</b> 2D</p>
-                    </div>
-                  </div>
-                  <div class="detail">
-                    <h2>
-                      <a href="phim/tham-tu-kien-ky-an-khong-dau.html"
-                        >Thám Tử Kiên: Kỳ Án Không Đầu</a
-                      >
-                    </h2>
-                    <p class="release">Khởi chiếu 30/04/2025</p>
+                    <p class="release">Khởi chiếu {{ movie.releaseDate }}</p>
                   </div>
                 </div>
               </div>
               <div class="clearfix"></div>
+            </div>
+            <div v-else class="row">
+              <div class="col-sm-12">
+                <div class="panel panel-warning text-center">
+                  <div class="panel-heading">
+                    <h3 class="panel-title" style="font-size: 18pt">
+                      <i class="fa fa-calendar-times-o" aria-hidden="true"></i>
+                      Thông báo
+                    </h3>
+                  </div>
+                  <div class="panel-body">
+                    <p
+                      style="font-size: 20pt; font-weight: bold; color: #a94442"
+                    >
+                      Chưa có lịch phim sắp chiếu
+                    </p>
+                    <p style="font-size: 13pt; color: #777">
+                      Vui lòng quay lại sau để xem các phim mới được cập nhật.
+                    </p>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -560,17 +155,32 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 
-// Biến boolean để xác định tab nào active
-const isNowShowing = ref(true); // mặc định đang chiếu
+const { $axios } = useNuxtApp();
+const isNowShowing = ref(true);
+const movieNowShowing = ref([]);
+const movieCommingSoon = ref([]);
 
-// Khi bấm "Phim đang chiếu"
+onMounted(async () => {
+  fetchMovieNowShowing();
+  fetchMovieCommingSoon();
+});
+
+const fetchMovieNowShowing = async () => {
+  const response = await $axios.get(`/movie/in-schedule`);
+  movieNowShowing.value = response.data.result;
+};
+
+const fetchMovieCommingSoon = async () => {
+  const response = await $axios.get(`/movie/not-in-schedule`);
+  movieCommingSoon.value = response.data.result;
+};
+
 const showNowShowing = () => {
   isNowShowing.value = true;
 };
 
-// Khi bấm "Phim sắp chiếu"
 const showComingSoon = () => {
   isNowShowing.value = false;
 };

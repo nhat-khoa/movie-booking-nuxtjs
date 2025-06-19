@@ -135,36 +135,38 @@
             <div class="collapse navbar-collapse">
               <ul class="nav navbar-nav navbar-left">
                 <li class="">
-                  <a href="index.html">{{ $t("header.home") }}</a>
+                  <a href="">{{ $t("header.home") }}</a>
                 </li>
                 <li :class="{ active: $route.path === '/movie' }">
                   <NuxtLink to="/movie">{{ $t("header.movie") }}</NuxtLink>
                 </li>
                 <li :class="{ active: $route.path === '/schedule' }">
-                  <NuxtLink to="/schedule">{{
-                    $t("header.schedule")
-                  }}</NuxtLink>
+                  <NuxtLink to="/schedule">
+                    {{ $t("header.schedule") }}
+                  </NuxtLink>
+                </li>
+                <li :class="{ active: $route.path === '/price' }">
+                  <NuxtLink to="/price">{{ $t("header.price") }}</NuxtLink>
+                </li>
+                <li :class="{ active: $route.path === '/member' }">
+                  <NuxtLink to="/member">{{ $t("header.member") }}</NuxtLink>
+                </li>
+                <li :class="{ active: $route.path === '/event' }">
+                  <NuxtLink to="/event">{{ $t("header.event") }}</NuxtLink>
+                </li>
+                <li :class="{ active: $route.path === '/rate-movie' }">
+                  <NuxtLink to="/rate-movie">
+                    {{ $t("header.review") }}
+                  </NuxtLink>
                 </li>
                 <li class="">
-                  <a href="gia-ve.html">{{ $t("header.price") }}</a>
-                </li>
-                <li class="">
-                  <a href="thanh-vien.html">{{ $t("header.member") }}</a>
-                </li>
-                <li class="">
-                  <a href="khuyen-mai.html">{{ $t("header.event") }}</a>
-                </li>
-                <li class="">
-                  <a href="danh-gia-phim.html">{{ $t("header.review") }}</a>
-                </li>
-                <li class="">
-                  <a href="gioi-thieu.html">{{ $t("header.introduce") }}</a>
+                  <a href="">{{ $t("header.introduce") }}</a>
                 </li>
                 <li class="dropdown">
                   <a
                     class="dropdown-toggle"
                     data-toggle="dropdown"
-                    href="#"
+                    href=""
                     role="button"
                     aria-haspopup="true"
                     aria-expanded="false"
@@ -173,12 +175,12 @@
                   </a>
                   <ul class="dropdown-menu">
                     <li>
-                      <a href="dich-vu/quang-cao-su-kien.html">
+                      <a href="">
                         {{ $t("header.advertisingEventServices") }}
                       </a>
                     </li>
                     <li>
-                      <a href="dich-vu/touch-voucher.html"> Touch Voucher </a>
+                      <a href=""> Touch Voucher </a>
                     </li>
                   </ul>
                 </li>
