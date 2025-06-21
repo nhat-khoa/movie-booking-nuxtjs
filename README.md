@@ -7,6 +7,12 @@ It supports real-time seat selection, Google login via OAuth2, QR code ticket di
 
 ---
 
+## 📽️ Video Demo
+
+👉 Watch At: [YouTube Video Demo](https://www.youtube.com/watch?v=r6mNs0JB_O8)
+
+---
+
 ## 🚀 Key Features
 
 - 🔐 **Google OAuth2 Login**  
@@ -23,11 +29,6 @@ It supports real-time seat selection, Google login via OAuth2, QR code ticket di
 
 ---
 
-## 📽️ Video Demo
-
-👉 Watch At: [YouTube Video Demo](https://www.youtube.com/watch?v=r6mNs0JB_O8)
-
----
 
 ## 🧪 Technology Stack
 
