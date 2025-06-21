@@ -43,7 +43,7 @@ It supports real-time seat selection, Google login via OAuth2, QR code ticket di
 
 ---
 
-## 🗂️ Project Structure
+## 🗂️ Project Structure (Simplified)
 
 ```
 booking-movie-ticket-nuxt/
