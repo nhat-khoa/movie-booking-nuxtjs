@@ -95,6 +95,6 @@ npm run preview
 ```
 ---
 ## 👨‍💻 Author
-@nhat-khoa – Backend Developer
+@nhat-khoa
 
 
